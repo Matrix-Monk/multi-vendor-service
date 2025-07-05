@@ -8,14 +8,24 @@ This project provides a unified API to fetch data from external vendors (synchro
 
 ```bash
 docker-compose up --build
+```
 
 ##  Run test
 
 ```bash
-cd k6
-k6 run loadtest.js > loadtest-result.txt
+cd k6 && k6 run loadtest.js > loadtest-result.txt
+```
 
-  
+## Monitor logs
+
+1. api logs
+```bash
+docker-compose logs -f api
+```
+2. Worker logs
+```bash
+docker-compose logs -f worker
+```
 
 ##  architecture diagram
 
