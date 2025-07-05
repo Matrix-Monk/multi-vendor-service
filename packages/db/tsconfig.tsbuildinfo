@@ -1,0 +1,1 @@
+{"root":["./src/mongo.ts","./src/redis.ts","./src/models/job.model.ts"],"version":"5.8.2"}
