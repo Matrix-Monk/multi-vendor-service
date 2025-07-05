@@ -26,9 +26,14 @@ docker-compose logs -f api
 ```bash
 docker-compose logs -f worker
 ```
+3. K6 result logs
+```bash
+check loadtest-result.txt inside multi-vendor-service/K6
+```
 
 ##  architecture diagram
 
+```bash
   +-----------+          +---------+          +--------+
   |  API      | <------> | Redis   | <------> | Worker |
   +-----------+          +---------+          +--------+
@@ -42,9 +47,9 @@ docker-compose logs -f worker
                      +---------+
                      | MongoDB |
                      +---------+
+```
 
-
-Key Design Decisions
+## Key Design Decisions
 	•	Database: MongoDB is used to store job status, request payloads, and final results.
 	•	Backend Language: Node.js powers both the API service and the background Worker for consistency and simplicity.
 	•	Queue: Redis Streams act as a lightweight, persistent queue between the API and Worker.
@@ -56,5 +61,27 @@ Key Design Decisions
 	•	Load Testing:  k6 is used to stress test the system under high concurrency and measure performance.
                       
 
+## cURL Commands
 
+1. Post endpoint to create a job : returns a request_id
 
+    ```bash
+    curl -X POST http://localhost:3000/api/v1/jobs \
+        -H "Content-Type: application/json" \
+        -d '{"vendor":"sync","payload":"some test data"}'
+    ```
+
+2. Get endpoint to fetch the status of the job: Insert the request_id
+
+    ```bash
+    curl http://localhost:3000/api/v1/jobs/<request_id>
+    ```
+
+## Short analysis  
+
+1.  The API handled ~16,924 iterations without errors.
+2.  Average response time was ~109ms, with 95% of requests completing under ~486ms.
+3.  The worker’s rate limiters behaved correctly:
+4.  Async jobs limited to 1 per second.
+5.  Sync jobs limited to ~3 per second.
+6.  No adjustments were needed during the test.
